@@ -1,0 +1,97 @@
+AI CONTENT GENERATOR - API ENDPOINTS
+
+BASE URL: http://localhost:8000
+
+=== AUTHENTICATION ENDPOINTS ===
+
+1. Register User
+   - URL: POST /api/auth/register
+   - Body: 
+     {
+       "name": "Test User",
+       "email": "test@example.com",
+       "password": "123456"
+     }
+   - Response: User object with JWT token
+
+2. Login User
+   - URL: POST /api/auth/login
+   - Body: 
+     {
+       "email": "test@example.com",
+       "password": "123456"
+     }
+   - Response: User object with JWT token
+
+3. Get User Profile
+   - URL: GET /api/auth/profile
+   - Headers: Authorization: Bearer {token}
+   - Response: User profile data
+
+4. Update User Profile
+   - URL: PUT /api/auth/profile
+   - Headers: Authorization: Bearer {token}
+   - Body: 
+     {
+       "name": "Updated Name",
+       "email": "updated@example.com",
+       "password": "newpassword" // Optional
+     }
+   - Response: Updated user object with new JWT token
+
+=== CONTENT ENDPOINTS ===
+
+5. Generate Content
+   - URL: POST /api/content/generate
+   - Headers: Authorization: Bearer {token}
+   - Body: 
+     {
+       "contentType": "Blog", // Options: "Blog", "Ad", "Caption", "Product Description"
+       "tone": "Friendly", // Options: "Formal", "Friendly", "Persuasive", "Funny"
+       "topic": "Digital Marketing for Startups",
+       "keywords": ["SEO", "growth", "branding"],
+       "language": "English" // Options: "English", "Hindi", "Spanish", "French", etc.
+     }
+   - Response: Generated content object with SEO score
+
+6. Get All User Content
+   - URL: GET /api/content
+   - Headers: Authorization: Bearer {token}
+   - Response: Array of all content created by user
+
+7. Toggle Favorite Status
+   - URL: PUT /api/content/:id/favorite
+   - Headers: Authorization: Bearer {token}
+   - Response: Updated content object
+
+8. Delete Content
+   - URL: DELETE /api/content/:id
+   - Headers: Authorization: Bearer {token}
+   - Response: Success message
+
+=== ADMIN ENDPOINTS ===
+
+9. Get Analytics
+   - URL: GET /api/admin/analytics
+   - Headers: Authorization: Bearer {admin_token}
+   - Response: Analytics data including user counts, content metrics, etc.
+
+10. Get All Users
+    - URL: GET /api/admin/users
+    - Headers: Authorization: Bearer {admin_token}
+    - Response: Array of all users (without passwords)
+
+=== TESTING NOTES ===
+
+1. First register a user or login with existing credentials
+2. Copy the JWT token from the response
+3. Use the token in the Authorization header for subsequent requests
+4. For admin endpoints, you need to have a user with isAdmin: true in the database
+
+=== SAMPLE WORKFLOW ===
+
+1. Register: POST /api/auth/register with user details
+2. Generate content: POST /api/content/generate with content parameters
+3. View all content: GET /api/content
+4. Mark as favorite: PUT /api/content/{content_id}/favorite
+5. Delete content: DELETE /api/content/{content_id}
