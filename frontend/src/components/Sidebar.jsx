@@ -1,8 +1,8 @@
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { FaHome, FaPen, FaHistory, FaStar, FaChartBar } from 'react-icons/fa';
+import { FaHome, FaPen, FaHistory, FaStar, FaChartBar, FaTimes } from 'react-icons/fa';
 
-const Sidebar = () => {
+const Sidebar = ({ closeSidebar }) => {
   const { user } = useAuth();
   
   const navItems = [
@@ -16,9 +16,18 @@ const Sidebar = () => {
   }
 
   return (
-    <aside className="w-64 bg-dark text-white h-full">
-      <div className="p-4">
-        <h2 className="text-2xl font-bold text-center mb-6">AI Content Gen</h2>
+    <aside className="w-64 bg-dark text-white h-full flex flex-col">
+      <div className="p-4 flex-1">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-xl font-bold">AI Content Gen</h2>
+          <button 
+            className="md:hidden text-gray-300 hover:text-white focus:outline-none" 
+            onClick={closeSidebar}
+          >
+            <FaTimes size={20} />
+          </button>
+        </div>
+        
         <nav>
           <ul className="space-y-2">
             {navItems.map((item) => (
@@ -32,6 +41,7 @@ const Sidebar = () => {
                         : 'text-gray-300 hover:bg-gray-700'
                     }`
                   }
+                  onClick={() => closeSidebar && window.innerWidth < 768 ? closeSidebar() : null}
                 >
                   <span className="mr-3">{item.icon}</span>
                   {item.text}

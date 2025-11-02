@@ -1,10 +1,27 @@
 import { useAuth } from '../context/AuthContext';
-import { useNavigate, Link } from 'react-router-dom';
-import { FaUser, FaSignOutAlt, FaTachometerAlt } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
+import { FaUser, FaBars } from 'react-icons/fa';
+import { useState, useRef, useEffect } from 'react';
 
-const Navbar = () => {
+const Navbar = ({ toggleSidebar }) => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   const handleLogout = () => {
     logout();
@@ -12,31 +29,39 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-white border-b border-gray-200 px-4 py-2.5 flex justify-between items-center">
+    <nav className="bg-white border-b border-gray-200 px-4 py-2.5 flex justify-between items-center shadow-sm">
       <div className="flex items-center">
-        <h1 className="text-xl font-bold text-primary">AI Content Generator</h1>
+        <button 
+          className="md:hidden mr-4 text-gray-600 hover:text-gray-900 focus:outline-none" 
+          onClick={toggleSidebar}
+        >
+          <FaBars size={20} />
+        </button>
+        <span className="text-lg md:text-xl font-semibold truncate">Welcome, {user?.name || 'User'}</span>
       </div>
       
-      <div className="flex items-center space-x-4">
-        <Link to="/dashboard" className="flex items-center space-x-1 text-gray-700 hover:text-primary">
-          <FaTachometerAlt className="text-gray-600" />
-          <span>Dashboard</span>
-        </Link>
-        
-        <div className="relative group">
-          <button className="flex items-center space-x-2 text-gray-700 hover:text-primary">
-            <FaUser className="text-gray-600" />
-            <span>{user?.name}</span>
+      <div className="flex items-center">
+        <div className="relative" ref={dropdownRef}>
+          <button 
+            className="flex items-center space-x-2 p-2 rounded-full hover:bg-gray-100"
+            onClick={() => setDropdownOpen(!dropdownOpen)}
+          >
+            <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white">
+              <FaUser />
+            </div>
+            <span className="hidden sm:inline">{user?.name?.split(' ')[0] || 'User'}</span>
           </button>
-          <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10 hidden group-hover:block">
-            <button 
-              onClick={handleLogout}
-              className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
-            >
-              <FaSignOutAlt className="mr-2" />
-              Logout
-            </button>
-          </div>
+          
+          {dropdownOpen && (
+            <div className="absolute right-0 w-48 mt-2 bg-white rounded-md shadow-lg py-1 z-10">
+              <button
+                onClick={handleLogout}
+                className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
+              >
+                Logout
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </nav>
